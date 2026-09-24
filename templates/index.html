@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Approval Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="page">
+    <header class="hero">
+        <div>
+            <p class="eyebrow">MACHINE LEARNING PROJECT</p>
+            <h1>Loan Approval Prediction</h1>
+            <p class="subtitle">
+                Enter applicant information to get a prediction from the trained
+                machine-learning model.
+            </p>
+        </div>
+        <div class="model-badge">
+            <span>Model validation accuracy</span>
+            <strong>{{ accuracy }}%</strong>
+        </div>
+    </header>
+
+    <main class="card">
+        <form method="POST">
+            <div class="section-title">
+                <h2>Applicant Details</h2>
+                <p>All fields are required.</p>
+            </div>
+
+            <div class="grid">
+                <div class="field">
+                    <label>No. of Dependents</label>
+                    <input type="number" name="no_of_dependents" min="0" max="20"
+                           value="{{ form.get('no_of_dependents', '') }}" required>
+                </div>
+
+                <div class="field">
+                    <label>Education</label>
+                    <select name="education" required>
+                        <option value="">Select education</option>
+                        <option value="Graduate" {% if form.get('education') == 'Graduate' %}selected{% endif %}>Graduate</option>
+                        <option value="Not Graduate" {% if form.get('education') == 'Not Graduate' %}selected{% endif %}>Not Graduate</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>Self Employed</label>
+                    <select name="self_employed" required>
+                        <option value="">Select</option>
+                        <option value="Yes" {% if form.get('self_employed') == 'Yes' %}selected{% endif %}>Yes</option>
+                        <option value="No" {% if form.get('self_employed') == 'No' %}selected{% endif %}>No</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>Annual Income (₹)</label>
+                    <input type="number" name="income_annum" min="0" step="1000"
+                           placeholder="e.g. 500000"
+                           value="{{ form.get('income_annum', '') }}" required>
+                </div>
+
+                <div class="field">
+                    <label>Loan Amount (₹)</label>
+                    <input type="number" name="loan_amount" min="0" step="1000"
+                           placeholder="e.g. 1000000"
+                           value="{{ form.get('loan_amount', '') }}" required>
+                </div>
+
+                <div class="field">
+                    <label>Loan Term (Years)</label>
+                    <input type="number" name="loan_term" min="1" max="50"
+                           placeholder="e.g. 10"
+                           value="{{ form.get('loan_term', '') }}" required>
+                </div>
+
+                <div class="field full">
+                    <label>CIBIL Score</label>
+                    <input type="number" name="cibil_score" min="0" max="1000"
+                           placeholder="e.g. 750"
+                           value="{{ form.get('cibil_score', '') }}" required>
+                    <small>Use the CIBIL score available in the applicant's record.</small>
+                </div>
+            </div>
+
+            <button type="submit">Predict Loan Status</button>
+        </form>
+
+        {% if result %}
+        <section class="result {% if result == 'Approved' %}approved{% elif result == 'Rejected' %}rejected{% endif %}">
+            {% if result == 'Approved' %}
+                <div class="icon">✓</div>
+                <div>
+                    <span class="result-label">Prediction</span>
+                    <h2>Loan Approved</h2>
+                    <p>Model confidence for this predicted class: <strong>{{ probability }}%</strong></p>
+                </div>
+            {% elif result == 'Rejected' %}
+                <div class="icon">!</div>
+                <div>
+                    <span class="result-label">Prediction</span>
+                    <h2>Loan Rejected</h2>
+                    <p>Model confidence for this predicted class: <strong>{{ probability }}%</strong></p>
+                </div>
+            {% else %}
+                <div>
+                    <h2>{{ result }}</h2>
+                </div>
+            {% endif %}
+        </section>
+        {% endif %}
+
+        <div class="notice">
+            <strong>Project note:</strong> This is an educational machine-learning
+            demonstration trained on the supplied dataset. The prediction should
+            not be treated as an actual lending or credit decision.
+        </div>
+    </main>
+
+    <footer>
+        Loan Approval Prediction • Flask + Scikit-learn
+    </footer>
+</div>
+</body>
+</html>
